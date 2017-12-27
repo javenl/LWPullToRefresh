@@ -14,7 +14,7 @@ typedef NS_ENUM(NSUInteger, LWPullToRefreshPosition) {
     LWPullToRefreshPositionBottom   // ScrollView底部，上拉加载更多
 };
 
-typedef void(^LWRefreshControlActionHandler)();
+typedef void(^LWRefreshControlActionHandler)(void);
 
 
 /**

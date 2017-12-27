@@ -15,18 +15,19 @@ static char UIScrollViewPullInfiniteControl;
 
 
 @implementation UIScrollView (LWPullToRefresh)
-@dynamic refreshControl;
+@dynamic lwrefreshControl;
 @dynamic infiniteControl;
 
 
 #pragma mark
+
 - (void)setPullToRefreshWithActionHandler:(void (^)(void))actionHandler {
     
-    if (self.refreshControl == nil) {
+    if (self.lwrefreshControl == nil) {
         LWRefreshControl *refreshControl = [[LWRefreshControl alloc] initWithScrollView:self position:LWPullToRefreshPositionTop];
-        self.refreshControl = refreshControl;
+        self.lwrefreshControl = refreshControl;
     }
-    self.refreshControl.actionHandler = actionHandler;
+    self.lwrefreshControl.actionHandler = actionHandler;
 }
 
 - (void)setInfiniteScrollingWithActionHandler:(void (^)(void))actionHandler {
@@ -39,11 +40,11 @@ static char UIScrollViewPullInfiniteControl;
 }
 
 - (void)removePullToRefreshActionHandler {
-    if (self.refreshControl != nil) {
-        self.refreshControl.actionHandler = nil;
-        [self.refreshControl removeFromSuperview];
+    if (self.lwrefreshControl != nil) {
+        self.lwrefreshControl.actionHandler = nil;
+        [self.lwrefreshControl removeFromSuperview];
     }
-    self.refreshControl = nil;
+    self.lwrefreshControl = nil;
 }
 
 - (void)removeInfiniteScrollingActionHandler {
@@ -57,8 +58,8 @@ static char UIScrollViewPullInfiniteControl;
 
 
 - (void)triggerPullToRefresh {
-    if (self.refreshControl) {
-        [self.refreshControl triggerPullToLoading];
+    if (self.lwrefreshControl) {
+        [self.lwrefreshControl triggerPullToLoading];
     }
 }
 
@@ -70,7 +71,7 @@ static char UIScrollViewPullInfiniteControl;
 
 
 - (void)endRefreshLoading {
-    [self.refreshControl endLoading];
+    [self.lwrefreshControl endLoading];
 }
 
 - (void)endRefreshLoadingAfterDelay:(NSTimeInterval)delay {
@@ -114,13 +115,13 @@ static char UIScrollViewPullInfiniteControl;
 
 
 #pragma mark - Property
-- (void)setRefreshControl:(LWRefreshControl *)refreshControl {
+- (void)setLwrefreshControl:(LWRefreshControl *)lwrefreshControl {
     [self willChangeValueForKey:@"LWPullToRefreshControl"];
-    objc_setAssociatedObject(self, &UIScrollViewPullToRefreshControl, refreshControl, OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, &UIScrollViewPullToRefreshControl, lwrefreshControl, OBJC_ASSOCIATION_ASSIGN);
     [self didChangeValueForKey:@"LWPullToRefreshControl"];
 }
 
-- (LWRefreshControl *)refreshControl {
+- (LWRefreshControl *)lwrefreshControl {
     return objc_getAssociatedObject(self, &UIScrollViewPullToRefreshControl);
 }
 

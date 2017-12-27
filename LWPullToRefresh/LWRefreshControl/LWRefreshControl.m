@@ -134,6 +134,7 @@
 
 - (void)stopAnimating {
     
+    
     [_progressLayer removeAnimationForKey:@"360RotationAnimation"];
 }
 
@@ -141,14 +142,15 @@
 
 
 #pragma mark - LWRefreshControl
-static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
+static const CGFloat kTriggerLoadingDefaultHeight = 45.0;
 
 @interface LWRefreshControl () {
     
     BOOL _isKVORegistered;
     UIScrollView *_scrollView;
     
-    LWRefreshControlIndicatorView *_indicatorView;
+    //LWRefreshControlIndicatorView *_indicatorView;
+    UIActivityIndicatorView *_indicatorView;
     
     UILabel *_textLabel;
     UILabel *_detailTextLabel;
@@ -232,13 +234,16 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
     rect.origin.x = 20;
     rect.origin.y = (CGRectGetHeight(self.bounds) - CGRectGetHeight(rect)) / 2.0;
     
-    _indicatorView = [[LWRefreshControlIndicatorView alloc] initWithFrame:rect];
-    _indicatorView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+//    _indicatorView = [[LWRefreshControlIndicatorView alloc] initWithFrame:rect];
+//    _indicatorView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+//    [self addSubview:_indicatorView];
+//    _indicatorView.trackColor = [UIColor clearColor];
+//    _indicatorView.progressColor = [UIColor grayColor];
+//    _indicatorView.progress = 0.0;
+//    _indicatorView.progressLineWidth = 2;
+    
+    _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     [self addSubview:_indicatorView];
-    _indicatorView.trackColor = [UIColor clearColor];
-    _indicatorView.progressColor = [UIColor grayColor];
-    _indicatorView.progress = 0.0;
-    _indicatorView.progressLineWidth = 2;
     
 }
 
@@ -254,7 +259,7 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
     _textLabel.font = [UIFont systemFontOfSize:18];
     _textLabel.textAlignment = NSTextAlignmentLeft;
     _textLabel.text = self.titles[LWPullToRefreshStateNormal];
-    [self addSubview:_textLabel];
+    //[self addSubview:_textLabel];
     
     rect.origin.y = CGRectGetMaxY(rect) + 5;
     rect.size.height = 14;
@@ -263,28 +268,30 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
     _detailTextLabel.font = [UIFont systemFontOfSize:12];
     _detailTextLabel.textAlignment = NSTextAlignmentLeft;
     _detailTextLabel.text = self.subtitles[LWPullToRefreshStateNormal];
-    [self addSubview:_detailTextLabel];
+    //[self addSubview:_detailTextLabel];
     
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGRect rect = self.bounds;
-    rect.size = CGSizeMake(20.0, 20.0);
-    rect.origin.x = 20;
-    rect.origin.y = (CGRectGetHeight(self.bounds) - CGRectGetHeight(rect)) / 2.0;
-    _indicatorView.frame = rect;
+    _indicatorView.center = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2);
     
-    rect.origin.x = CGRectGetMaxX(_indicatorView.frame) + 10;
-    rect.origin.y = CGRectGetMinY(_indicatorView.frame);
-    rect.size.width = CGRectGetWidth(self.bounds) - CGRectGetMaxX(rect) - 10;
-    rect.size.height = CGRectGetHeight(_indicatorView.frame);
-    _textLabel.frame = rect;
-    
-    rect.origin.y = CGRectGetMaxY(rect) + 5;
-    rect.size.height = 14;
-    _detailTextLabel.frame = rect;
+//    CGRect rect = self.bounds;
+//    rect.size = CGSizeMake(20.0, 20.0);
+//    rect.origin.x = 20;
+//    rect.origin.y = (CGRectGetHeight(self.bounds) - CGRectGetHeight(rect)) / 2.0;
+//    _indicatorView.frame = rect;
+//    
+//    rect.origin.x = CGRectGetMaxX(_indicatorView.frame) + 10;
+//    rect.origin.y = CGRectGetMinY(_indicatorView.frame);
+//    rect.size.width = CGRectGetWidth(self.bounds) - CGRectGetMaxX(rect) - 10;
+//    rect.size.height = CGRectGetHeight(_indicatorView.frame);
+//    _textLabel.frame = rect;
+//    
+//    rect.origin.y = CGRectGetMaxY(rect) + 5;
+//    rect.size.height = 14;
+//    _detailTextLabel.frame = rect;
 }
 
 
@@ -426,14 +433,25 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
             CGFloat realOffset = _scrollView.contentOffset.y + _scrollView.contentInset.top;
             [self updateIndicatorProgressWithOffset:realOffset];
             _refreshState = (realOffset <= -kTriggerLoadingDefaultHeight) ? LWPullToRefreshStateTriggered : LWPullToRefreshStateNormal;
+            
+//            _refreshState = (realOffset < 0) ? LWPullToRefreshStateTriggered : LWPullToRefreshStateNormal;
+//            if(_refreshState == LWPullToRefreshStateTriggered){
+//                [self pullToLoading];
+//            }
         }
     }
     else {
         if (_refreshState != LWPullToRefreshStateLoading) {
             CGFloat realOffset = _scrollView.contentOffset.y + CGRectGetHeight(_scrollView.bounds) - _scrollView.contentSize.height - _scrollView.contentInset.bottom;
             [self updateIndicatorProgressWithOffset:realOffset];
-            _refreshState = (realOffset > kTriggerLoadingDefaultHeight) ? LWPullToRefreshStateTriggered : LWPullToRefreshStateNormal;
-                
+            //_refreshState = (realOffset > kTriggerLoadingDefaultHeight) ? LWPullToRefreshStateTriggered : LWPullToRefreshStateNormal;
+            
+            //NSLog(@"real offset : %f", realOffset);
+            _refreshState = (realOffset > 0) ? LWPullToRefreshStateTriggered : LWPullToRefreshStateNormal;
+            
+            if(_refreshState == LWPullToRefreshStateTriggered){
+                [self pullToLoading];
+            }
         }
     }
     
@@ -442,9 +460,9 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
 
 - (void)scrollViewPanGestureRecognizerStateChanged {
     
-    if (_scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        [self pullToLoading];
-    }
+//    if (_scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+//        [self pullToLoading];
+//    }
 }
 
 - (void)updateIndicatorProgressWithOffset:(CGFloat)offset {
@@ -452,7 +470,7 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
     CGFloat progress = ABS(offset) / kTriggerLoadingDefaultHeight;
     progress = progress >= 0.96 ? 0.96 : progress;
     if (_position == LWPullToRefreshPositionTop) {
-        _indicatorView.progress = offset <= 0 ? progress : 0;
+        //_indicatorView.progress = offset <= 0 ? progress : 0;
         
         CGFloat alpha = offset / kTriggerLoadingDefaultHeight;
         alpha = alpha <= 0 ? ABS(alpha) : 0;
@@ -461,7 +479,7 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
         
     }
     else {
-        _indicatorView.progress = progress;
+        //_indicatorView.progress = progress;
     }
 }
 
@@ -523,7 +541,8 @@ static const CGFloat kTriggerLoadingDefaultHeight = 80.0;
         else {
             
             CGFloat realOffset = _scrollView.contentOffset.y + CGRectGetHeight(_scrollView.bounds) - _scrollView.contentSize.height;
-            if (realOffset >= kTriggerLoadingDefaultHeight) {
+            //if (realOffset >= kTriggerLoadingDefaultHeight) {
+            if(realOffset >= 0){
                 
                 UIEdgeInsets insets = _scrollView.contentInset;
                 insets.bottom += kTriggerLoadingDefaultHeight;

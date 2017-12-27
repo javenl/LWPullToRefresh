@@ -11,7 +11,7 @@
 
 @interface UIScrollView (LWPullToRefresh)
 
-@property (nonatomic, strong, readonly) LWRefreshControl *refreshControl;
+@property (nonatomic, strong, readonly) LWRefreshControl *lwrefreshControl;
 @property (nonatomic, strong, readonly) LWRefreshControl *infiniteControl;
 
 
